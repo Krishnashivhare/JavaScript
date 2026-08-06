@@ -1,276 +1,532 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Part Total Calculator</title>
-  <style>
-    :root {
-      --bg-primary: #f3f4f6;
-      --card-bg: #ffffff;
-      --text-main: #1f2937;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --danger: #ef4444;
-      --border: #e5e7eb;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Part Total Calculator</title>
+    <style>
+        :root {
+            --bg-color: #f5f7fb;
+            --container-bg: #ffffff;
+            --primary-color: #1e293b;
+            --accent-color: #0f766e;
+            --accent-hover: #115e59;
+            --danger-color: #e11d48;
+            --danger-hover: #be123c;
+            --border-color: #e2e8f0;
+            --text-secondary: #64748b;
+            --success-color: #16a34a;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      margin: 0;
-      padding: 2rem 1rem;
-      display: flex;
-      justify-content: center;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 800px;
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    h1 {
-      margin-top: 0;
-      font-size: 1.75rem;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 0.75rem;
-    }
+        .calculator-container {
+            background-color: var(--container-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 800px;
+        }
 
-    .form-group {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr auto;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
 
-    @media (max-width: 600px) {
-      .form-group {
-        grid-template-columns: 1fr;
-      }
-    }
+        /* Notification Banner instead of standard alert() window */
+        .message-box {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
 
-    input, select {
-      padding: 0.625rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 1rem;
-      outline: none;
-    }
+        .message-box.error {
+            display: block;
+            background-color: #ffe4e6;
+            color: #b91c1c;
+            border: 1px solid #fecdd3;
+        }
 
-    input:focus {
-      border-color: var(--accent);
-    }
+        .message-box.success {
+            display: block;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
 
-    button {
-      padding: 0.625rem 1.25rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
+        /* Input Form Grid Layout */
+        .input-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.2fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
 
-    .btn-add {
-      background-color: var(--accent);
-      color: white;
-    }
+        @media (max-width: 640px) {
+            .input-form {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .btn-add:hover {
-      background-color: var(--accent-hover);
-    }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-    .btn-delete {
-      background-color: transparent;
-      color: var(--danger);
-      padding: 0.25rem 0.5rem;
-    }
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
-    .btn-delete:hover {
-      background-color: #ffeeef;
-    }
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #fff;
+            color: var(--primary-color);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            height: 44px;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+        }
 
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            user-select: none;
+        }
 
-    th {
-      background-color: #f9fafb;
-      font-weight: 600;
-    }
+        button:active {
+            transform: scale(0.98);
+        }
 
-    .summary-card {
-      background: #f9fafb;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-top: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-    }
+        .btn-add {
+            background-color: var(--accent-color);
+            color: white;
+            align-self: flex-end;
+        }
 
-    .summary-item {
-      display: flex;
-      flex-direction: column;
-    }
+        .btn-add:hover {
+            background-color: var(--accent-hover);
+        }
 
-    .summary-label {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 0.25rem;
-    }
+        .btn-delete {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            height: 32px;
+            font-size: 13px;
+            border-radius: 6px;
+        }
 
-    .summary-value {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
+        .btn-delete:hover {
+            background-color: #fff1f2;
+            border-color: #fecdd3;
+        }
 
-    .discount-badge {
-      display: inline-block;
-      background-color: #d1fae5;
-      color: #065f46;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-  </style>
+        .btn-clear {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-clear:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Responsive Table Container */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            background-color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            padding: 32px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Metrics Calculations Box */
+        .summary-card {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 15px;
+        }
+
+        .summary-row .label {
+            color: var(--text-secondary);
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+        }
+
+        .summary-row.total-row {
+            border-top: 2px dashed var(--border-color);
+            margin-top: 12px;
+            padding-top: 16px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .summary-row.total-row .value {
+            color: var(--accent-color);
+            font-size: 24px;
+        }
+
+        .actions-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Part Total Calculator</h1>
-  
-  <!-- Input Form -->
-  <div class="form-group">
-    <input type="text" id="partName" placeholder="Part Name (e.g. Brake Pads)" required>
-    <input type="number" id="partPrice" placeholder="Price ($)" min="0" step="0.01" required>
-    <input type="number" id="partQty" placeholder="Qty" min="1" step="1" value="1" required>
-    <button class="btn-add" onclick="addPart()">Add Part</button>
-  </div>
+<div class="calculator-container">
+    <h2>Part Total Calculator</h2>
+    
+    <!-- Dynamic Internal Alerts Banner -->
+    <div id="messageBox" class="message-box"></div>
+    
+    <!-- User Submission Form Elements -->
+    <div class="input-form">
+        <div class="form-group">
+            <label for="partName">Part Specification / Name</label>
+            <input type="text" id="partName" placeholder="e.g., Brake Rotors Pack" autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+            <label for="partPrice">Unit Price ($)</label>
+            <input type="number" id="partPrice" placeholder="0.00" min="0" step="0.01">
+        </div>
 
-  <!-- Parts Inventory Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Part Name</th>
-        <th>Unit Price</th>
-        <th>Quantity</th>
-        <th>Total ($)</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="partsTableBody">
-      <!-- Generated dynamically through JS Array Mapping -->
-    </tbody>
-  </table>
+        <div class="form-group">
+            <label for="partQuantity">Quantity</label>
+            <input type="number" id="partQuantity" value="1" min="1" step="1">
+        </div>
+        
+        <div class="form-group">
+            <label for="partDiscount">Applied Discount</label>
+            <select id="partDiscount">
+                <option value="0">Standard (0%)</option>
+                <option value="5">Promo Level 1 (5%)</option>
+                <option value="10">Promo Level 2 (10%)</option>
+                <option value="15">Wholesale Mid (15%)</option>
+                <option value="20">Wholesale Max (20%)</option>
+                <option value="30">Clearance Event (30%)</option>
+            </select>
+        </div>
 
-  <!-- Calculation Summary Panel -->
-  <div class="summary-card">
-    <div class="summary-item">
-      <span class="summary-label">Items Count</span>
-      <span class="summary-value" id="totalItems">0</span>
+        <button class="btn-add" onclick="addPartItem()">Add to Line</button>
     </div>
-    <div class="summary-item">
-      <span class="summary-label">Subtotal</span>
-      <span class="summary-value" id="subtotalValue">$0.00</span>
+
+    <!-- Active Spreadsheet View Grid -->
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Part Details</th>
+                    <th>Unit Price</th>
+                    <th>Qty</th>
+                    <th>Discount Rule</th>
+                    <th>Extended Total</th>
+                    <th style="width: 80px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryLines">
+                <!-- Data injection point -->
+            </tbody>
+        </table>
+        <div id="emptyState" class="empty-state">
+            No line items present. Enter metrics above to trigger processing calculations.
+        </div>
     </div>
-    <div class="summary-item">
-      <span class="summary-label">Applied Discount</span>
-      <span class="summary-value" id="discountValue">$0.00 <span id="discountType"></span></span>
+
+    <!-- Aggregated Metrics Panel -->
+    <div class="summary-card">
+        <div class="summary-row">
+            <span class="label">Unique Line Items:</span>
+            <span id="summaryCount" class="value">0</span>
+        </div>
+        <div class="summary-row">
+            <span class="label">Total Units Processed:</span>
+            <span id="summaryTotalQty" class="value">0</span>
+        </div>
+        <div class="summary-row">
+            <span class="label">Gross Combined Subtotal:</span>
+            <span id="summaryGross" class="value">$0.00</span>
+        </div>
+        <div class="summary-row">
+            <span class="label">Aggregated Discounts Subtracted:</span>
+            <span id="summarySavings" class="value" style="color: var(--danger-color);">$0.00</span>
+        </div>
+        <div class="summary-row total-row">
+            <span class="label">Net Amount Payable:</span>
+            <span id="summaryNet" class="value">$0.00</span>
+        </div>
     </div>
-    <div class="summary-item">
-      <span class="summary-label">Final Total</span>
-      <span class="summary-value" id="finalTotalValue" style="color: var(--accent);">$0.00</span>
+
+    <!-- Master Purge Action Button -->
+    <div class="actions-footer">
+        <button class="btn-clear" onclick="clearCalculatorState()">Reset System Ledger</button>
     </div>
-  </div>
 </div>
 
 <script>
-  // Primary Array Data Store representing internal State
-  let partsList = [];
+    // Primary reactive data memory pipeline
+    let itemsLedger = [];
 
-  /**
-   * Appends a new item entity object into data store
-   */
-  function addPart() {
-    const nameInput = document.getElementById('partName');
-    const priceInput = document.getElementById('partPrice');
-    const qtyInput = document.getElementById('partQty');
+    // Form submission processing block
+    function addPartItem() {
+        const nameEl = document.getElementById('partName');
+        const priceEl = document.getElementById('partPrice');
+        const qtyEl = document.getElementById('partQuantity');
+        const discountEl = document.getElementById('partDiscount');
 
-    const name = nameInput.value.trim();
-    const price = parseFloat(priceInput.value);
-    const qty = parseInt(qtyInput.value);
+        const name = nameEl.value.trim();
+        const basePrice = parseFloat(priceEl.value);
+        const quantity = parseInt(qtyEl.value, 10);
+        const discountPercentage = parseInt(discountEl.value, 10);
 
-    // Basic Input Validations
-    if (!name || isNaN(price) || isNaN(qty) || price  part.id !== id);
-    updateCalculator();
-  }
+        // Validation constraints check
+        if (!name) {
+            displayStatus('Identification tracking name cannot be blank.', 'error');
+            return;
+        }
+        if (isNaN(basePrice) || basePrice <= 0) {
+            displayStatus('Please specify an asset value price configuration greater than zero.', 'error');
+            return;
+        }
+        if (isNaN(quantity) || quantity < 1) {
+            displayStatus('System line processing requires a minimal item count of 1 unit.', 'error');
+            return;
+        }
 
-  /**
-   * Executes UI transformations rendering array matrix metrics processing reduction logic rules
-   */
-  function updateCalculator() {
-    const tableBody = document.getElementById('partsTableBody');
-    
-    // Array Method Implementation: map() - Creates dynamic visual table rows markup string matrix array representation
-    tableBody.innerHTML = partsList.map(part => {
-      const lineTotal = part.price * part.qty;
-      return `
-        <tr>
-          <td>${part.name}</td>
-          <td>$${part.price.toFixed(2)}</td>
-          <td>${part.qty}</td>
-          <td>$${lineTotal.toFixed(2)}</td>
-          <td>
-            <button class="btn-delete" onclick="deletePart(${part.id})">Remove</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
+        // Structuring the data model object
+        const individualLineItem = {
+            uid: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            name: name,
+            unitPrice: basePrice,
+            quantity: quantity,
+            discountRate: discountPercentage
+        };
 
-    // Array Method Implementation: reduce() - Summarizes values across array collection boundaries
-    const totalItems = partsList.reduce((acc, part) => acc + part.qty, 0);
-    const subtotal = partsList.reduce((acc, part) => acc + (part.price * part.qty), 0);
+        // Array Method: push entry to the data pipeline
+        itemsLedger.push(individualLineItem);
 
-    // Dynamic Discount Rules Assessment Engine Core logic block execution matching limits mapping array scale elements
-    let discountRate = 0;
-    let badgeText = '';
+        // Reset inputs and return focus to top item field
+        nameEl.value = '';
+        priceEl.value = '';
+        qtyEl.value = '1';
+        discountEl.value = '0';
+        nameEl.focus();
 
-    if (subtotal >= 500) {
-      discountRate = 0.15; // 15% discount for tier orders over $500 
-      badgeText = '15% Bulk Order Tier';
-    } else if (subtotal >= 200) {
-      discountRate = 0.10; // 10% discount for orders over $200
-      badgeText = '10% Multi-item Vol';
+        displayStatus(`Successfully attached item record line: "${name}"`, 'success');
+        renderLedgerEngine();
     }
 
-    const discountAmount = subtotal * discountRate;
-    const finalTotal = subtotal - discountAmount;
+    // Selective line deletion handler
+    function removeLineItem(uniqueId) {
+        const targetedRecord = itemsLedger.find(item => item.uid === uniqueId);
+        
+        // Array Method: filter tracking elements out immutably
+        itemsLedger = itemsLedger.filter(item => item.uid !== uniqueId);
+        
+        if (targetedRecord) {
+            displayStatus(`Removed tracking line item: "${targetedRecord.name}"`, 'success');
+        }
+        renderLedgerEngine();
+    }
 
-    // Direct interface mutations updating dynamic numeric visualization segments tracking outputs
-    document.getElementById('totalItems').textContent = totalItems;
-    document.getElementById('subtotalValue').textContent = `$${subtotal.toFixed(2)}`;
-    
-    const discountValEl = document.getElementById('discountValue');
-    discountValEl.innerHTML = `$${discountAmount.toFixed(2)} ${badgeText ? `<span class="discount-badge">${badgeText}</span>` : ''}`;
-    
-    document.getElementById('finalTotalValue').textContent = `$${finalTotal.toFixed(2)}`;
-  }
+    // Total state reset logic 
+    function clearCalculatorState() {
+        if (itemsLedger.length === 0) {
+            displayStatus('Active system calculation matrix ledger is already completely clear.', 'error');
+            return;
+        }
+        
+        itemsLedger = [];
+        displayStatus('State configuration array flushed successfully.', 'success');
+        renderLedgerEngine();
+    }
+
+    // Data-to-View Compilation Engine
+    function renderLedgerEngine() {
+        const rowBody = document.getElementById('inventoryLines');
+        const defaultPlaceholder = document.getElementById('emptyState');
+        
+        // Clean out existing table contents
+        rowBody.innerHTML = '';
+
+        if (itemsLedger.length === 0) {
+            defaultPlaceholder.style.display = 'block';
+            resetMetricsUIValues();
+            return;
+        }
+        defaultPlaceholder.style.display = 'none';
+
+        // Array Method: map array items to compute financial modifiers on each line entry object
+        const extendedCalculatedLines = itemsLedger.map(part => {
+            const initialRawSubtotal = part.unitPrice * part.quantity;
+            const itemSavingsFactor = initialRawSubtotal * (part.discountRate / 100);
+            const relativeNetSubtotal = initialRawSubtotal - itemSavingsFactor;
+
+            return {
+                ...part,
+                rawGross: initialRawSubtotal,
+                savingsComputed: itemSavingsFactor,
+                netFinalValue: relativeNetSubtotal
+            };
+        });
+
+        // Loop Array elements inserting constructed elements down to the DOM
+        extendedCalculatedLines.forEach(item => {
+            const tableRowNode = document.createElement('tr');
+            
+            tableRowNode.innerHTML = `
+                <td><strong style="color: var(--primary-color);">${sanitizeOutputHtml(item.name)}</strong></td>
+                <td>$${item.unitPrice.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>${item.discountRate > 0 ? `<span style="color: var(--danger-color); font-weight: 600;">${item.discountRate}% Off</span>` : '<span style="color: var(--text-secondary);">Standard</span>'}</td>
+                <td><strong>$${item.netFinalValue.toFixed(2)}</strong></td>
+                <td style="text-align: center;">
+                    <button class="btn-delete" onclick="removeLineItem('${item.uid}')">Remove</button>
+                </td>
+            `;
+            rowBody.appendChild(tableRowNode);
+        });
+
+        // Array Method: reduce elements array objects step-by-step down to global numbers
+        const absoluteAggregateGross = extendedCalculatedLines.reduce((total, line) => total + line.rawGross, 0);
+        const absoluteAggregateSavings = extendedCalculatedLines.reduce((total, line) => total + line.savingsComputed, 0);
+        const absoluteAggregateNet = extendedCalculatedLines.reduce((total, line) => total + line.netFinalValue, 0);
+        const absoluteAggregateUnits = extendedCalculatedLines.reduce((total, line) => total + line.quantity, 0);
+
+        // Bind raw metrics directly to text visual templates
+        document.getElementById('summaryCount').textContent = itemsLedger.length;
+        document.getElementById('summaryTotalQty').textContent = absoluteAggregateUnits;
+        document.getElementById('summaryGross').textContent = `$${absoluteAggregateGross.toFixed(2)}`;
+        document.getElementById('summarySavings').textContent = `-$${absoluteAggregateSavings.toFixed(2)}`;
+        document.getElementById('summaryNet').textContent = `$${absoluteAggregateNet.toFixed(2)}`;
+    }
+
+    // Default structural clear settings
+    function resetMetricsUIValues() {
+        document.getElementById('summaryCount').textContent = '0';
+        document.getElementById('summaryTotalQty').textContent = '0';
+        document.getElementById('summaryGross').textContent = '$0.00';
+        document.getElementById('summarySavings').textContent = '$0.00';
+        document.getElementById('summaryNet').textContent = '$0.00';
+    }
+
+    // Custom status notification handler replacing standard blocking alert popups
+    function displayStatus(message, statusType) {
+        const msgBox = document.getElementById('messageBox');
+        msgBox.textContent = message;
+        msgBox.className = 'message-box ' + statusType;
+        
+        clearTimeout(window.msgTimeoutId);
+        window.msgTimeoutId = setTimeout(() => {
+            msgBox.style.display = 'none';
+        }, 5000);
+    }
+
+    // Standard string sanitization wrapper guarding against HTML injection issues
+    function sanitizeOutputHtml(inputStr) {
+        return inputStr.replace(/&/g, "&amp;")
+                       .replace(/</g, "&lt;")
+                       .replace(/>/g, "&gt;")
+                       .replace(/"/g, "&quot;")
+                       .replace(/'/g, "&#039;");
+    }
 </script>
 
 </body>

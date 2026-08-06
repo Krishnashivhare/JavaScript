@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Part Total Calculator</title>
+  <style>
+    :root {
+      --bg-primary: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #ef4444;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      margin: 0;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.75rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .form-group {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    input, select {
+      padding: 0.625rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    button {
+      padding: 0.625rem 1.25rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .btn-add {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .btn-add:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-delete {
+      background-color: transparent;
+      color: var(--danger);
+      padding: 0.25rem 0.5rem;
+    }
+
+    .btn-delete:hover {
+      background-color: #ffeeef;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #f9fafb;
+      font-weight: 600;
+    }
+
+    .summary-card {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+
+    .summary-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .discount-badge {
+      display: inline-block;
+      background-color: #d1fae5;
+      color: #065f46;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Part Total Calculator</h1>
+  
+  <!-- Input Form -->
+  <div class="form-group">
+    <input type="text" id="partName" placeholder="Part Name (e.g. Brake Pads)" required>
+    <input type="number" id="partPrice" placeholder="Price ($)" min="0" step="0.01" required>
+    <input type="number" id="partQty" placeholder="Qty" min="1" step="1" value="1" required>
+    <button class="btn-add" onclick="addPart()">Add Part</button>
+  </div>
+
+  <!-- Parts Inventory Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Part Name</th>
+        <th>Unit Price</th>
+        <th>Quantity</th>
+        <th>Total ($)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="partsTableBody">
+      <!-- Generated dynamically through JS Array Mapping -->
+    </tbody>
+  </table>
+
+  <!-- Calculation Summary Panel -->
+  <div class="summary-card">
+    <div class="summary-item">
+      <span class="summary-label">Items Count</span>
+      <span class="summary-value" id="totalItems">0</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Subtotal</span>
+      <span class="summary-value" id="subtotalValue">$0.00</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Applied Discount</span>
+      <span class="summary-value" id="discountValue">$0.00 <span id="discountType"></span></span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Final Total</span>
+      <span class="summary-value" id="finalTotalValue" style="color: var(--accent);">$0.00</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Primary Array Data Store representing internal State
+  let partsList = [];
+
+  /**
+   * Appends a new item entity object into data store
+   */
+  function addPart() {
+    const nameInput = document.getElementById('partName');
+    const priceInput = document.getElementById('partPrice');
+    const qtyInput = document.getElementById('partQty');
+
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value);
+    const qty = parseInt(qtyInput.value);
+
+    // Basic Input Validations
+    if (!name || isNaN(price) || isNaN(qty) || price  part.id !== id);
+    updateCalculator();
+  }
+
+  /**
+   * Executes UI transformations rendering array matrix metrics processing reduction logic rules
+   */
+  function updateCalculator() {
+    const tableBody = document.getElementById('partsTableBody');
+    
+    // Array Method Implementation: map() - Creates dynamic visual table rows markup string matrix array representation
+    tableBody.innerHTML = partsList.map(part => {
+      const lineTotal = part.price * part.qty;
+      return `
+        <tr>
+          <td>${part.name}</td>
+          <td>$${part.price.toFixed(2)}</td>
+          <td>${part.qty}</td>
+          <td>$${lineTotal.toFixed(2)}</td>
+          <td>
+            <button class="btn-delete" onclick="deletePart(${part.id})">Remove</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Array Method Implementation: reduce() - Summarizes values across array collection boundaries
+    const totalItems = partsList.reduce((acc, part) => acc + part.qty, 0);
+    const subtotal = partsList.reduce((acc, part) => acc + (part.price * part.qty), 0);
+
+    // Dynamic Discount Rules Assessment Engine Core logic block execution matching limits mapping array scale elements
+    let discountRate = 0;
+    let badgeText = '';
+
+    if (subtotal >= 500) {
+      discountRate = 0.15; // 15% discount for tier orders over $500 
+      badgeText = '15% Bulk Order Tier';
+    } else if (subtotal >= 200) {
+      discountRate = 0.10; // 10% discount for orders over $200
+      badgeText = '10% Multi-item Vol';
+    }
+
+    const discountAmount = subtotal * discountRate;
+    const finalTotal = subtotal - discountAmount;
+
+    // Direct interface mutations updating dynamic numeric visualization segments tracking outputs
+    document.getElementById('totalItems').textContent = totalItems;
+    document.getElementById('subtotalValue').textContent = `$${subtotal.toFixed(2)}`;
+    
+    const discountValEl = document.getElementById('discountValue');
+    discountValEl.innerHTML = `$${discountAmount.toFixed(2)} ${badgeText ? `<span class="discount-badge">${badgeText}</span>` : ''}`;
+    
+    document.getElementById('finalTotalValue').textContent = `$${finalTotal.toFixed(2)}`;
+  }
+</script>
+
+</body>
+</html>

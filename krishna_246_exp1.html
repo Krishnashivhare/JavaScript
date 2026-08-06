@@ -1,0 +1,66 @@
+===========================InternalCSS.html=====================================
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Internal CSS</title>
+
+    <link rel="stylesheet" href="external.css">
+
+    <style>
+        body{
+            background-color: lightgray;
+            text-align: center;
+        }
+
+        h1{
+            color: #24364d;
+        }
+
+        p{
+            color: gray;
+        }
+
+        button{
+            background-color: purple;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <br><br><br>
+
+    <h1>Welcome to internal CSS</h1>
+    <p>This webpage is styled using internal CSS</p>
+    <button>Click Here</button>
+
+    <br><br><br><br>
+
+    <h1 class="external">Welcome to external CSS</h1>
+    <p class="external">This webpage is styled using external CSS</p>
+    <button>Click Here</button>
+
+    <br><br><br><br>
+
+    <h1 style="color:#24364d;">Welcome to inline CSS</h1>
+    <p style="color:gray;">This paragraph is styled using inline CSS</p>
+    <button style="background:purple;color:white;border:none;padding:10px 20px;border-radius:5px;">
+        Click Here
+    </button>
+
+</body>
+</html>
+
+==================================external.css===================================
+
+.external{
+    color:#24364d;
+}
+
+p.external{
+    color:gray;
+}

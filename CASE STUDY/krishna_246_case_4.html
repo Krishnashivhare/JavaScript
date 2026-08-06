@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATM PIN Verification</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --atm-bg: #e0e5ec;
+      --atm-shadow: #a3b1c6;
+      --atm-highlight: #ffffff;
+      --screen-bg: #1a2f33;
+      --screen-text: #64ffda;
+      --screen-text-error: #ff5252;
+      --screen-text-success: #69f0ae;
+      --key-bg: #d1d9e6;
+      --btn-cancel: #ef5350;
+      --btn-clear: #ffa726;
+      --btn-enter: #66bb6a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #2c3e50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .atm-container {
+      background: var(--atm-bg);
+      padding: 40px;
+      border-radius: 30px;
+      box-shadow:
+        15px 15px 30px #1a252f,
+        -15px -15px 30px #3e5771;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .atm-machine {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* --- Screen Styling --- */
+    .atm-screen {
+      background: #0f1c1f;
+      padding: 20px;
+      border-radius: 15px;
+      border: 8px solid #2a2a2a;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      position: relative;
+      height: 250px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Scanline effect */
+    .atm-screen::after {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background:
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg,
+          rgba(255, 0, 0, 0.06),
+          rgba(0, 255, 0, 0.02),
+          rgba(0, 0, 255, 0.06));
+      z-index: 2;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+    }
+
+    .bank-logo {
+      font-family: 'Share Tech Mono', monospace;
+      color: #4a6c72;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .screen-content {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--screen-text);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-shadow: 0 0 5px rgba(100, 255, 218, 0.5);
+      z-index: 1;
+    }
+
+    .welcome-text {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .instruction {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .pin-display {
+      display: flex;
+      gap: 10px;
+      height: 30px;
+      margin-bottom: 20px;
+    }
+
+    .pin-dot {
+      width: 20px;
+      height: 20px;
+      background-color: var(--screen-text);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--screen-text);
+      animation: blink 1s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .message-area {
+      font-size: 0.9rem;
+      min-height: 40px;
+      line-height: 1.4;
+      transition: color 0.3s ease;
+    }
+
+    .msg-error {
+      color: var(--screen-text-error);
+      text-shadow: 0 0 5px rgba(255, 82, 82, 0.5);
+    }
+
+    .msg-success {
+      color: var(--screen-text-success);
+      text-shadow: 0 0 5px rgba(105, 240, 174, 0.5);
+    }
+
+    /* --- Keypad Styling --- */
+    .atm-keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      background: #c3cfdf;
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid #b0bec5;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .key {
+      background: var(--key-bg);
+      border: none;
+      border-radius: 8px;
+      height: 60px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      box-shadow:
+        5px 5px 10px var(--atm-shadow),
+        -5px -5px 10px var(--atm-highlight);
+      transition: all 0.1s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .key:active {
+      box-shadow:
+        inset 5px 5px 10px var(--atm-shadow),
+        inset -5px -5px 10px var(--atm-highlight);
+      transform: scale(0.95);
+    }
+
+    .action-key {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .cancel { background: var(--btn-cancel); }
+    .clear { background: var(--btn-clear); }
+    .enter { background: var(--btn-enter); }
+
+    .cancel:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,0.2); }
+    .clear:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,0.2); }
+    .enter:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,0.2); }
+
+    .empty-key {
+      visibility: hidden;
+    }
+
+    /* --- Card Slot --- */
+    .card-slot {
+      align-self: flex-end;
+      width: 150px;
+      height: 40px;
+      background: #cfd8e3;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow:
+        inset 2px 2px 5px var(--atm-shadow),
+        inset -2px -2px 5px var(--atm-highlight);
+      position: relative;
+    }
+
+    .slot-opening {
+      width: 120px;
+      height: 6px;
+      background: #111;
+      border-radius: 3px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .card-indicator {
+      width: 40px;
+      height: 4px;
+      background: #00e676;
+      border-radius: 2px;
+      box-shadow: 0 0 8px #00e676;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .atm-container { padding: 20px; }
+      .key { height: 50px; font-size: 1.2rem; }
+      .action-key { font-size: 0.7rem; }
+      .atm-screen { height: 220px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="atm-container">
+    <div class="atm-machine">
+      <div class="atm-screen">
+        <div class="bank-logo">SecureBank</div>
+
+        <div id="screen-content" class="screen-content">
+          <p class="welcome-text">WELCOME</p>
+          <p class="instruction">PLEASE ENTER YOUR PIN</p>
+
+          <div class="pin-display" id="pin-display">
+            <!-- Dots will appear here -->
+          </div>
+
+          <div class="message-area" id="message-area"></div>
+        </div>
+      </div>
+
+      <div class="atm-keypad">
+        <button class="key num-key" data-val="1">1</button>
+        <button class="key num-key" data-val="2">2</button>
+        <button class="key num-key" data-val="3">3</button>
+        <button class="key action-key cancel" id="btn-cancel">CANCEL</button>
+
+        <button class="key num-key" data-val="4">4</button>
+        <button class="key num-key" data-val="5">5</button>
+        <button class="key num-key" data-val="6">6</button>
+        <button class="key action-key clear" id="btn-clear">CLEAR</button>
+
+        <button class="key num-key" data-val="7">7</button>
+        <button class="key num-key" data-val="8">8</button>
+        <button class="key num-key" data-val="9">9</button>
+        <button class="key action-key enter" id="btn-enter">ENTER</button>
+
+        <button class="key empty-key"></button>
+        <button class="key num-key" data-val="0">0</button>
+        <button class="key empty-key"></button>
+        <button class="key empty-key"></button>
+      </div>
+
+      <div class="card-slot">
+        <div class="slot-opening"></div>
+        <div class="card-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // Case Study 4: ATM Card PIN Verification
+    // Demonstrating: Functions, Scope, Closure
+    // ==========================================
+
+    // --- 1. Function Declaration (Scope: Global) ---
+    // Reverses a string
+    function reverseString(str) {
+      return str.split('').reverse().join('');
+    }
+
+    // --- 2. Function Expression (Scope: Global) ---
+    // Checks if original and reversed strings are identical
+    const isPalindrome = function(original, reversed) {
+      return original === reversed;
+    };
+
+    // --- 3. Arrow Function & 4. Closure (Scope: Global & Local) ---
+    // Factory function demonstrating closure to keep track of secure attempts
+    const createATMSystem = () => {
+      // Scope: Local variables to createATMSystem
+      let attempts = 0;
+      const MAX_ATTEMPTS = 3;
+
+      // The returned arrow function creates a closure, retaining access to 'attempts' and 'MAX_ATTEMPTS'
+      return (pin) => {
+        attempts++;
+
+        if (attempts > MAX_ATTEMPTS) {
+          return {
+            status: 'BLOCKED',
+            message: 'CARD BLOCKED. TOO MANY FAILED ATTEMPTS.'
+          };
+        }
+
+        const reversedPin = reverseString(pin);
+        const valid = isPalindrome(pin, reversedPin);
+
+        if (valid) {
+          // Reset attempts on success if we wanted a real system, but we'll leave it simple
+          attempts = 0;
+          return {
+            status: 'SUCCESS',
+            message: 'SECURITY VERIFIED: PIN IS PALINDROME. ACCESS GRANTED.'
+          };
+        } else {
+          return {
+            status: 'ERROR',
+            message: `INVALID PIN. ATTEMPT ${attempts} OF ${MAX_ATTEMPTS}.`
+          };
+        }
+      };
+    };
+
+    // Initialize the secure verifier instance (closure is active)
+    const verifyPin = createATMSystem();
+
+    // ==========================================
+    // UI Interaction Logic
+    // ==========================================
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentPin = "";
+
+      // DOM Elements
+      const pinDisplay = document.getElementById("pin-display");
+      const messageArea = document.getElementById("message-area");
+      const numKeys = document.querySelectorAll(".num-key");
+      const btnClear = document.getElementById("btn-clear");
+      const btnCancel = document.getElementById("btn-cancel");
+      const btnEnter = document.getElementById("btn-enter");
+
+      // Update the visual dots on the ATM screen
+      function updateDisplay() {
+        pinDisplay.innerHTML = "";
+        for (let i = 0; i < currentPin.length; i++) {
+          const dot = document.createElement("div");
+          dot.className = "pin-dot";
+          pinDisplay.appendChild(dot);
+        }
+      }
+
+      // Display messages on the screen
+      function showMessage(msg, type) {
+        messageArea.textContent = msg;
+        messageArea.className = `message-area ${
+          type === 'error' ? 'msg-error' : (type === 'success' ? 'msg-success' : '')
+        }`;
+
+        // Clear success/error message after 3 seconds, unless it's a block message
+        if (!msg.includes("BLOCKED") && !msg.includes("GRANTED")) {
+          setTimeout(() => {
+            messageArea.textContent = "";
+            messageArea.className = "message-area";
+          }, 3000);
+        }
+      }
+
+      // Number pad click events
+      numKeys.forEach(key => {
+        key.addEventListener("click", () => {
+          // Max 6 digits PIN
+          if (currentPin.length < 6) {
+            currentPin += key.getAttribute("data-val");
+            updateDisplay();
+          }
+        });
+      });
+
+      // Clear key (removes last entered digit)
+      btnClear.addEventListener("click", () => {
+        currentPin = currentPin.slice(0, -1);
+        updateDisplay();
+      });
+
+      // Cancel key (clears entire input)
+      btnCancel.addEventListener("click", () => {
+        currentPin = "";
+        updateDisplay();
+        showMessage("OPERATION CANCELLED", "error");
+      });
+
+      // Enter key (Submits PIN for verification)
+      btnEnter.addEventListener("click", () => {
+        if (currentPin.length === 0) {
+          showMessage("PLEASE ENTER A PIN", "error");
+          return;
+        }
+
+        // Execute PIN Verification using our closure
+        const result = verifyPin(currentPin);
+
+        if (result.status === 'BLOCKED') {
+          showMessage(result.message, "error");
+          // Visually disable keypad
+          document.querySelectorAll(".key").forEach(btn => {
+            btn.style.opacity = "0.5";
+            btn.style.pointerEvents = "none";
+          });
+          currentPin = "";
+          updateDisplay();
+        } else if (result.status === 'SUCCESS') {
+          showMessage(result.message, "success");
+          currentPin = "";
+          updateDisplay();
+        } else {
+          showMessage(result.message, "error");
+          currentPin = "";
+          updateDisplay();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 9 - Theme Settings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card" id="themeCard">
+        <div class="badge">
+            <span class="dot"></span> Experiment 9 - Developed by Krishna Shivhare • PRN: 240325213146
+        </div>
+        
+        <div class="subtitle">• THEME SETTINGS</div>
+        <h1>Theme Settings</h1>
+        <p class="description">Select and persist your theme preference using HTML5 Web Storage.</p>
+
+        <div class="form-group">
+            <label for="themeSelect">Select your preferred theme:</label>
+            <select id="themeSelect">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button id="saveLocal" class="btn btn-local">
+                💾 Save using localStorage
+            </button>
+            <button id="saveSession" class="btn btn-session">
+                ⏱ Save using sessionStorage
+            </button>
+        </div>
+        <button id="clearPrefs" class="btn btn-clear">
+            🗑 Clear Preferences
+        </button>
+
+        <div id="statusMessage" class="status-message">
+            Select a theme and save your preference.
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Lab — pattern annotation, validation &amp; analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #E3E6DD;
+    --paper-raised: #ECEEE6;
+    --ink: #23261F;
+    --ink-soft: #565A4E;
+    --rule: #B7B9AC;
+    --blue: #2E4A6B;
+    --blue-tint: rgba(46,74,107,0.14);
+    --red: #A5362A;
+    --red-tint: rgba(165,54,42,0.14);
+    --gold: #93701F;
+    --gold-tint: rgba(176,141,43,0.18);
+    --green: #4B6B3A;
+    --green-tint: rgba(75,107,58,0.16);
+    --purple: #5C4A6B;
+    --purple-tint: rgba(92,74,107,0.16);
+    --pink: #8A3F5A;
+    --pink-tint: rgba(138,63,90,0.14);
+
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px);
+    background-size: 100% 2.6em;
+    background-attachment: local;
+  }
+
+  ::selection{ background: var(--gold-tint); }
+
+  a{ color: var(--blue); }
+
+  button{ font-family: inherit; }
+
+  :focus-visible{
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- Masthead ---------- */
+  header.masthead{
+    padding: 64px 0 40px;
+    border-bottom: 3px double var(--ink);
+  }
+  .masthead .eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  h1.title{
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(40px, 7vw, 66px);
+    line-height: 0.98;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .masthead .dek{
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  main{ padding-bottom: 90px; }
+
+  section.specimen{
+    padding: 52px 0 40px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .specimen-head{
+    display:flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .specimen-num{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 2px 7px;
+    background: var(--paper-raised);
+  }
+  .specimen-head h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 28px;
+    margin: 0;
+  }
+  .specimen-note{
+    font-family: var(--body);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 26px;
+    max-width: 60ch;
+  }
+
+  /* ---------- Hero manuscript ---------- */
+  .manuscript{
+    position: relative;
+    border: 1px solid var(--ink);
+    background: var(--paper-raised);
+    box-shadow: 4px 4px 0 var(--rule);
+  }
+  .manuscript-toolbar{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .manuscript-toolbar button{
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink);
+    font-size: 11px;
+    padding: 5px 10px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .manuscript-toolbar button:hover{ border-color: var(--ink); }
+
+  .manuscript-body{ position: relative; }
+  .manuscript-layer{
+    margin:0;
+    width: 100%;
+    min-height: 220px;
+    padding: 22px 24px;
+    font-family: var(--mono);
+    font-size: 14.5px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: none;
+  }
+  #backdrop{
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  #input{
+    position: relative;
+    background: transparent;
+    color: var(--ink);
+    caret-color: var(--red);
+    resize: vertical;
+    outline: none;
+  }
+  mark{
+    background: transparent;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+    box-decoration-break: clone;
+  }
+  mark.m-emails{ background: var(--blue-tint); box-shadow: inset 0 -2px 0 var(--blue); }
+  mark.m-phones{ background: var(--green-tint); box-shadow: inset 0 -2px 0 var(--green); }
+  mark.m-urls{ background: var(--purple-tint); box-shadow: inset 0 -2px 0 var(--purple); }
+  mark.m-dates{ background: var(--gold-tint); box-shadow: inset 0 -2px 0 var(--gold); }
+  mark.m-hashtags{ background: var(--pink-tint); box-shadow: inset 0 -2px 0 var(--pink); }
+  mark.m-money{ background: var(--red-tint); box-shadow: inset 0 -2px 0 var(--red); }
+
+  .legend{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .swatch{ width:10px; height:10px; border-radius: 2px; display:inline-block; }
+  .sw-emails{ background: var(--blue); }
+  .sw-phones{ background: var(--green); }
+  .sw-urls{ background: var(--purple); }
+  .sw-dates{ background: var(--gold); }
+  .sw-hashtags{ background: var(--pink); }
+  .sw-money{ background: var(--red); }
+
+  /* ---------- Specimen 01: validator ---------- */
+  .validator{
+    display:flex;
+    gap: 16px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  #emailInput{
+    flex: 1 1 320px;
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 14px 16px;
+    background: var(--paper-raised);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+  }
+  .verdict{
+    flex: 0 0 150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    background: var(--paper-raised);
+  }
+  .verdict.valid{ color: var(--green); border-color: var(--green); background: var(--green-tint); }
+  .verdict.invalid{ color: var(--red); border-color: var(--red); background: var(--red-tint); }
+
+  .checklist{
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px,1fr));
+    gap: 8px 20px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+  }
+  .checklist li{ display:flex; align-items:center; gap: 8px; color: var(--ink-soft); }
+  .checklist li.pass{ color: var(--green); }
+  .checklist li.fail{ color: var(--red); }
+  .checklist .mark-icon{ width: 16px; display:inline-block; text-align:center; }
+
+  /* ---------- Specimen 02: extraction ---------- */
+  .extract-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .extract-card{
+    border: 1px solid var(--rule);
+    background: var(--paper-raised);
+    border-top: 3px solid var(--cat-color, var(--ink));
+    padding: 14px 16px 16px;
+  }
+  .extract-card h3{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    display:flex;
+    justify-content: space-between;
+  }
+  .extract-card ul{
+    list-style: none;
+    margin:0; padding:0;
+    font-family: var(--mono);
+    font-size: 13px;
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .extract-card li{
+    word-break: break-word;
+    border-bottom: 1px dotted var(--rule);
+    padding-bottom: 5px;
+  }
+  .extract-card .empty{ color: var(--ink-soft); font-style: italic; font-family: var(--body); }
+
+  /* ---------- Specimen 03: analysis ---------- */
+  .stat-tally{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 32px;
+  }
+  .stat-cell{
+    background: var(--paper-raised);
+    padding: 16px 14px;
+  }
+  .stat-cell .num{
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+    display:block;
+  }
+  .stat-cell .lbl{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .analysis-cols{
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 36px;
+  }
+  @media (max-width: 640px){ .analysis-cols{ grid-template-columns: 1fr; } }
+
+  h3.sub{
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0 0 14px;
+  }
+
+  .freq-row{
+    display:grid;
+    grid-template-columns: 90px 1fr 30px;
+    align-items:center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .freq-bar-track{ background: var(--rule); height: 8px; }
+  .freq-bar{ background: var(--blue); height: 8px; }
+
+  .sentence-list{
+    list-style: none;
+    counter-reset: sent;
+    margin:0; padding:0;
+    font-size: 14.5px;
+  }
+  .sentence-list li{
+    counter-increment: sent;
+    padding: 8px 0 8px 34px;
+    position: relative;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .sentence-list li::before{
+    content: counter(sent);
+    position:absolute;
+    left:0; top:8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    width: 20px; height: 20px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding: 40px 0 70px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  footer .pattern-ref{
+    display:grid;
+    grid-template-columns: 100px 1fr;
+    gap: 6px 16px;
+    margin-top: 14px;
+  }
+  footer .pattern-ref dt{ color: var(--ink); }
+  footer .pattern-ref dd{ margin:0; word-break: break-all; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+  }
+
+  @media (max-width: 560px){
+    .wrap{ padding: 0 18px; }
+    header.masthead{ padding-top: 44px; }
+    .checklist{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow"><span>Regex &amp; String Methods</span><span id="clock"></span></div>
+    <h1 class="title">Text Lab</h1>
+    <p class="dek">Paste anything below. Every email, number, link and date gets marked up right where it stands — like a proofreader's pencil, but for patterns.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="specimen" id="manuscript-section" style="padding-top:44px;">
+    <div class="manuscript">
+      <div class="manuscript-toolbar">
+        <span>manuscript.txt — live annotation</span>
+        <button id="resetBtn" type="button">Reset sample</button>
+      </div>
+      <div class="manuscript-body">
+        <pre class="manuscript-layer" id="backdrop" aria-hidden="true"></pre>
+        <textarea class="manuscript-layer" id="input" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="swatch sw-emails"></i>email</span>
+      <span><i class="swatch sw-phones"></i>phone</span>
+      <span><i class="swatch sw-urls"></i>url</span>
+      <span><i class="swatch sw-dates"></i>date</span>
+      <span><i class="swatch sw-hashtags"></i>hashtag</span>
+      <span><i class="swatch sw-money"></i>currency</span>
+    </div>
+  </section>
+
+  <section class="specimen">
+    <div class="specimen-head">
+      <span class="specimen-num">01</span>
+      <h2>Email Validation</h2>
+    </div>
+    <p class="specimen-note">Structural checks run independently, so an invalid address tells you exactly which piece is missing.</p>
+    <div class="validator">
+      <input id="emailInput" type="text" placeholder="type an email address…" value="a.b_c-d@my-site.io" autocomplete="off">
+      <div class="verdict" id="verdict">—</div>
+    </div>
+    <ul class="checklist" id="checklist"></ul>
+  </section>
+
+  <section class="specimen">
+    <div class="specimen-head">
+      <span class="specimen-num">02</span>
+      <h2>Extraction Log</h2>
+    </div>
+    <p class="specimen-note">Pulled live from the manuscript above — edit the text up top and this log updates.</p>
+    <div class="extract-grid" id="extractGrid"></div>
+  </section>
+
+  <section class="specimen" style="border-bottom:none;">
+    <div class="specimen-head">
+      <span class="specimen-num">03</span>
+      <h2>Text Analysis</h2>
+    </div>
+    <p class="specimen-note">Character, word and sentence counts, plus the words that repeat most (common stopwords excluded).</p>
+
+    <div class="stat-tally" id="statTally"></div>
+
+    <div class="analysis-cols">
+      <div>
+        <h3 class="sub">Most frequent words</h3>
+        <div id="freqList"></div>
+      </div>
+      <div>
+        <h3 class="sub">Sentences found</h3>
+        <ol class="sentence-list" id="sentenceList"></ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>Patterns in use —</div>
+    <dl class="pattern-ref" id="patternRef"></dl>
+  </div>
+</footer>
+
+<script>
+(function(){
+
+  /* ---------------- Regex patterns ---------------- */
+  const EMAIL_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+
+  const EXTRACT = {
+    emails:   { re: /[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, label: "Emails" },
+    phones:   { re: /(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g,       label: "Phones" },
+    urls:     { re: /https?:\/\/[^\s,)\]]+/g,                                     label: "URLs" },
+    dates:    { re: /\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g,        label: "Dates" },
+    hashtags: { re: /#\w+/g,                                                      label: "Hashtags" },
+    money:    { re: /\$\d+(?:,\d{3})*(?:\.\d{2})?/g,                              label: "Currency" },
+  };
+
+  const STOPWORDS = new Set(["the","a","an","and","or","but","is","are","was","were","to","of","in","on","for","with","at","by","it","this","that","as","be","have","has","had","i","you","he","she","we","they","also","see","our"]);
+  const WORD_RE = /[A-Za-z']+/g;
+  const SENTENCE_SPLIT_RE = /(?<=[.!?])\s+/;
+
+  const SAMPLE = `Contact Jane at jane.smith@company.com or call (555) 123-4567.
+Visit https://example.com/pricing for details, or see our post
+from 2026-08-10 (also written 8/10/2026). Follow #DataScience
+and tag #TextLab. Total invoice: $1,250.00. A second contact,
+sam.lee@studio.io, confirmed by 8/14/2026.`;
+
+  /* ---------------- Helpers ---------------- */
+  function escapeHtml(s){
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function annotate(text){
+    // Collect all matches across categories with positions, then render once.
+    const spans = [];
+    Object.entries(EXTRACT).forEach(([key, cfg]) => {
+      const re = new RegExp(cfg.re.source, cfg.re.flags);
+      let m;
+      while ((m = re.exec(text)) !== null){
+        spans.push({ start: m.index, end: m.index + m[0].length, cls: "m-" + key });
+        if (m[0].length === 0) re.lastIndex++;
+      }
+    });
+    spans.sort((a,b) => a.start - b.start || b.end - a.end);
+
+    let html = "";
+    let cursor = 0;
+    spans.forEach(sp => {
+      if (sp.start < cursor) return; // skip overlapping match
+      html += escapeHtml(text.slice(cursor, sp.start));
+      html += `<mark class="${sp.cls}">${escapeHtml(text.slice(sp.start, sp.end))}</mark>`;
+      cursor = sp.end;
+    });
+    html += escapeHtml(text.slice(cursor));
+    return html + (text.endsWith("\n") ? " " : ""); // keep trailing newline visible
+  }
+
+  function extractAll(text){
+    const out = {};
+    Object.entries(EXTRACT).forEach(([key, cfg]) => {
+      out[key] = text.match(cfg.re) || [];
+    });
+    return out;
+  }
+
+  function basicStats(text){
+    const stripped = text.trim();
+    const sentences = stripped ? stripped.split(SENTENCE_SPLIT_RE).filter(Boolean) : [];
+    return {
+      characters: stripped.length,
+      charsNoSpaces: stripped.replace(/\s/g,"").length,
+      words: stripped ? stripped.split(/\s+/).filter(Boolean).length : 0,
+      sentences: sentences.length,
+      lines: stripped ? stripped.split("\n").length : 0,
+      sentenceList: sentences.map(s => s.trim()).filter(Boolean)
+    };
+  }
+
+  function wordFrequencies(text, topN){
+    const words = (text.toLowerCase().match(WORD_RE) || []).filter(w => !STOPWORDS.has(w) && w.length > 1);
+    const counts = {};
+    words.forEach(w => counts[w] = (counts[w]||0) + 1);
+    return Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, topN);
+  }
+
+  /* ---------------- DOM refs ---------------- */
+  const input = document.getElementById("input");
+  const backdrop = document.getElementById("backdrop");
+  const resetBtn = document.getElementById("resetBtn");
+  const emailInput = document.getElementById("emailInput");
+  const verdictEl = document.getElementById("verdict");
+  const checklistEl = document.getElementById("checklist");
+  const extractGrid = document.getElementById("extractGrid");
+  const statTally = document.getElementById("statTally");
+  const freqList = document.getElementById("freqList");
+  const sentenceList = document.getElementById("sentenceList");
+  const patternRef = document.getElementById("patternRef");
+  const clock = document.getElementById("clock");
+
+  /* ---------------- Renderers ---------------- */
+  function renderManuscript(){
+    const text = input.value;
+    backdrop.innerHTML = annotate(text);
+    backdrop.scrollTop = input.scrollTop;
+    renderExtraction(text);
+    renderAnalysis(text);
+  }
+
+  function renderExtraction(text){
+    const data = extractAll(text);
+    extractGrid.innerHTML = Object.entries(EXTRACT).map(([key, cfg]) => {
+      const items = data[key];
+      const colorVar = {emails:'--blue',phones:'--green',urls:'--purple',dates:'--gold',hashtags:'--pink',money:'--red'}[key];
+      const body = items.length
+        ? `<ul>${items.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>`
+        : `<span class="empty">none found</span>`;
+      return `<div class="extract-card" style="--cat-color:var(${colorVar})">
+                <h3><span>${cfg.label}</span><span>${items.length}</span></h3>
+                ${body}
+              </div>`;
+    }).join("");
+  }
+
+  function renderAnalysis(text){
+    const stats = basicStats(text);
+    const tally = [
+      ["characters","Characters"],
+      ["charsNoSpaces","No spaces"],
+      ["words","Words"],
+      ["sentences","Sentences"],
+      ["lines","Lines"],
+    ];
+    statTally.innerHTML = tally.map(([k,l]) =>
+      `<div class="stat-cell"><span class="num">${stats[k]}</span><span class="lbl">${l}</span></div>`
+    ).join("");
+
+    const freqs = wordFrequencies(text, 8);
+    const max = freqs.length ? freqs[0][1] : 1;
+    freqList.innerHTML = freqs.length
+      ? freqs.map(([w,c]) => `
+          <div class="freq-row">
+            <span>${escapeHtml(w)}</span>
+            <span class="freq-bar-track"><span class="freq-bar" style="width:${(c/max*100).toFixed(0)}%"></span></span>
+            <span>${c}</span>
+          </div>`).join("")
+      : `<p class="empty" style="font-family:var(--body);font-style:italic;color:var(--ink-soft)">no words yet</p>`;
+
+    sentenceList.innerHTML = stats.sentenceList.length
+      ? stats.sentenceList.map(s => `<li>${escapeHtml(s)}</li>`).join("")
+      : `<li style="border:none;color:var(--ink-soft);font-style:italic">no sentences yet</li>`;
+  }
+
+  function renderChecklist(email){
+    const trimmed = email.trim();
+    const checks = [
+      { label: "not empty", pass: trimmed.length > 0 },
+      { label: "has @ symbol", pass: trimmed.includes("@") },
+      { label: "one @ only", pass: (trimmed.match(/@/g)||[]).length === 1 },
+      { label: "valid local part", pass: /^[A-Za-z0-9][A-Za-z0-9._%+-]*@/.test(trimmed) },
+      { label: "valid domain", pass: /@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(trimmed) },
+      { label: "no spaces", pass: !/\s/.test(trimmed) },
+    ];
+    checklistEl.innerHTML = checks.map(c =>
+      `<li class="${trimmed ? (c.pass ? 'pass':'fail') : ''}">
+         <span class="mark-icon">${trimmed ? (c.pass ? '✓':'✕') : '·'}</span>${c.label}
+       </li>`
+    ).join("");
+
+    const valid = EMAIL_PATTERN.test(trimmed);
+    verdictEl.textContent = trimmed ? (valid ? "Valid" : "Invalid") : "—";
+    verdictEl.className = "verdict" + (trimmed ? (valid ? " valid" : " invalid") : "");
+  }
+
+  function renderFooter(){
+    patternRef.innerHTML = `
+      <dt>email</dt><dd>${escapeHtml(EMAIL_PATTERN.source)}</dd>
+      ${Object.entries(EXTRACT).map(([k,c]) => `<dt>${k}</dt><dd>${escapeHtml(c.re.source)}</dd>`).join("")}
+    `;
+  }
+
+  function tickClock(){
+    const now = new Date();
+    clock.textContent = now.toLocaleDateString(undefined,{ year:'numeric', month:'short', day:'2-digit' });
+  }
+
+  /* ---------------- Wire up ---------------- */
+  input.addEventListener("input", renderManuscript);
+  input.addEventListener("scroll", () => { backdrop.scrollTop = input.scrollTop; });
+  emailInput.addEventListener("input", () => renderChecklist(emailInput.value));
+  resetBtn.addEventListener("click", () => { input.value = SAMPLE; renderManuscript(); input.focus(); });
+
+  input.value = SAMPLE;
+  renderManuscript();
+  renderChecklist(emailInput.value);
+  renderFooter();
+  tickClock();
+})();
+</script>
+
+</body>
+</html>

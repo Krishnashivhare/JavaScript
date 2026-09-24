@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 10 - JSON Data Fetching</title>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary { background-color: #3498db; color: #fff; }
+        .btn-primary:hover { background-color: #2980b9; }
+
+        .btn-secondary { background-color: #9b59b6; color: #fff; }
+        .btn-secondary:hover { background-color: #8e44ad; }
+
+        .btn-danger { background-color: #e74c3c; color: #fff; }
+        .btn-danger:hover { background-color: #c0392b; }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background-color: #2c3e50;
+            color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        tbody tr:nth-of-type(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Directory</h1>
+        <p>Load and display JSON data dynamically.</p>
+        
+        <div class="controls">
+            <button id="btnFetch" class="btn btn-primary">Load via fetch()</button>
+            <button id="btnJQuery" class="btn btn-secondary">Load via $.getJSON()</button>
+            <button id="btnClear" class="btn btn-danger">Clear Data</button>
+        </div>
+
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Company</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row">
+                        <td colspan="4">No data loaded. Click a button above.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="errorMessage" class="error"></div>
+    </div>
+    
+    <script>
+        const apiUrl = 'https://jsonplaceholder.typicode.com/users';
+
+        const btnFetch = document.getElementById('btnFetch');
+        const btnJQuery = document.getElementById('btnJQuery');
+        const btnClear = document.getElementById('btnClear');
+        const tableBody = document.getElementById('tableBody');
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Function to render data in the table
+        function renderTable(data) {
+            tableBody.innerHTML = ''; // Clear previous data
+            
+            if (data.length === 0) {
+                showEmptyMessage();
+                return;
+            }
+            
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.company.name}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function showEmptyMessage() {
+            tableBody.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="4">No data loaded. Click a button above.</td>
+                </tr>
+            `;
+        }
+
+        function showLoader() {
+            tableBody.innerHTML = '';
+            loader.style.display = 'block';
+            errorMessage.textContent = '';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+        }
+
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            showEmptyMessage();
+        }
+
+        // Method 1: Using vanilla fetch() API
+        btnFetch.addEventListener('click', async () => {
+            showLoader();
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                renderTable(data);
+            } catch (error) {
+                showError('Failed to fetch data using fetch(): ' + error.message);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // Method 2: Using jQuery $.getJSON()
+        $('#btnJQuery').on('click', function() {
+            showLoader();
+            
+            $.getJSON(apiUrl)
+                .done(function(data) {
+                    renderTable(data);
+                    hideLoader();
+                })
+                .fail(function(jqxhr, textStatus, error) {
+                    showError('Failed to fetch data using jQuery: ' + textStatus + ', ' + error);
+                    hideLoader();
+                });
+        });
+
+        // Clear Data
+        btnClear.addEventListener('click', () => {
+            errorMessage.textContent = '';
+            showEmptyMessage();
+        });
+    </script>
+</body>
+</html>

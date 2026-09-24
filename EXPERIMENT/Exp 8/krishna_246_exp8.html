@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Admission Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <div class="brand-top">
+                <h1>TITAN<span>FITNESS</span></h1>
+                <p>Train hard. Recover harder. Fill out the form to lock in your membership.</p>
+            </div>
+            <div class="plates">
+                <p class="plates-label">Membership durations</p>
+                <div class="plate-row">
+                    <span class="plate-disc"></span>
+                    <span class="plate-info">
+                        <span class="plate-name">1 Month</span>
+                        <span class="plate-price">₹2,000</span>
+                    </span>
+                </div>
+                <div class="plate-row">
+                    <span class="plate-disc"></span>
+                    <span class="plate-info">
+                        <span class="plate-name">Quarterly</span>
+                        <span class="plate-price">₹4,000</span>
+                    </span>
+                </div>
+                <div class="plate-row">
+                    <span class="plate-disc"></span>
+                    <span class="plate-info">
+                        <span class="plate-name">Half-yearly</span>
+                        <span class="plate-price">₹7,000</span>
+                    </span>
+                </div>
+                <div class="plate-row">
+                    <span class="plate-disc"></span>
+                    <span class="plate-info">
+                        <span class="plate-name">Yearly</span>
+                        <span class="plate-price">₹18,000</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <form id="gymForm" novalidate>
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="John Doe">
+                <span class="error-message" id="fullNameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com">
+                <span class="error-message" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="1234567890">
+                <span class="error-message" id="phoneError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" placeholder="25" min="16" max="100">
+                <span class="error-message" id="ageError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Membership Duration</label>
+                <select id="duration" name="duration">
+                    <option value="" disabled selected>Select duration</option>
+                    <option value="1">1 Month (₹2,000)</option>
+                    <option value="3">Quarterly (₹4,000)</option>
+                    <option value="6">Half-yearly (₹7,000)</option>
+                    <option value="12">Yearly (₹18,000)</option>
+                </select>
+                <span class="error-message" id="durationError"></span>
+            </div>
+
+            <p class="membership-total" id="membershipTotal" aria-live="polite">Select a duration to see the total.</p>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Min 8 characters">
+                <span class="error-message" id="passwordError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password">
+                <span class="error-message" id="confirmPasswordError"></span>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit Application</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

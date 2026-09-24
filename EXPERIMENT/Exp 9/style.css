@@ -1,0 +1,228 @@
+:root {
+    /* Default Light Theme */
+    --bg-color: #f8fafc;
+    --container-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --accent-color: #3b82f6; /* Will be overridden by JS */
+    
+    /* Default Dark Theme (applied via class) */
+    --dark-bg: #0f172a;
+    --dark-container: #1e293b;
+    --dark-text: #f8fafc;
+    --dark-muted: #94a3b8;
+    --dark-border: #334155;
+    
+    --success: #10b981;
+    --danger: #ef4444;
+}
+
+[data-theme="dark"] {
+    --bg-color: var(--dark-bg);
+    --container-bg: var(--dark-container);
+    --text-main: var(--dark-text);
+    --text-muted: var(--dark-muted);
+    --border-color: var(--dark-border);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .container {
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+header p {
+    color: var(--text-muted);
+}
+
+.storage-section {
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+[data-theme="dark"] .storage-section {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2rem;
+    font-weight: 600;
+}
+
+.badge.local {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.badge.session {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.control-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Form Controls */
+input[type="text"], textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+textarea {
+    resize: vertical;
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bg-color);
+    padding: 0.3rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.theme-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    background: transparent;
+    border-radius: 0.5rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.theme-btn.active {
+    background: var(--container-bg);
+    color: var(--text-main);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Buttons */
+.danger-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px dashed var(--danger);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.danger-btn:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.highlight {
+    color: var(--accent-color);
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.counter-display {
+    padding: 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-align: center;
+}

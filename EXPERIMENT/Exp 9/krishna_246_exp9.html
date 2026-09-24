@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Storage Preferences</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Preferences</h1>
+            <p>Using LocalStorage & SessionStorage</p>
+        </header>
+
+        <div class="storage-section local-storage-section">
+            <div class="section-header">
+                <h2>Local Storage (Persistent)</h2>
+                <span class="badge local">Saves across tabs & restarts</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Theme</label>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" data-theme="light">Light</button>
+                    <button class="theme-btn" data-theme="dark">Dark</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="accentColor">Accent Color</label>
+                <input type="color" id="accentColor" value="#3b82f6">
+            </div>
+
+            <div class="control-group">
+                <label for="userName">Display Name</label>
+                <input type="text" id="userName" placeholder="Enter your name...">
+            </div>
+
+            <button class="danger-btn" id="clearLocalBtn">Clear Local Storage</button>
+        </div>
+
+        <div class="storage-section session-storage-section">
+            <div class="section-header">
+                <h2>Session Storage (Temporary)</h2>
+                <span class="badge session">Clears when tab closes</span>
+            </div>
+
+            <div class="control-group">
+                <label for="sessionNotes">Session Draft Notes</label>
+                <textarea id="sessionNotes" rows="4" placeholder="Type some notes here... they will survive a page reload, but not a tab close."></textarea>
+            </div>
+
+            <div class="control-group">
+                <label>Session Views</label>
+                <div class="counter-display">
+                    Page loaded <span id="viewCount" class="highlight">0</span> times this session.
+                </div>
+            </div>
+
+            <button class="danger-btn" id="clearSessionBtn">Clear Session Storage</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "name": "Aarav Sharma",
+        "email": "aarav@example.com",
+        "department": "Computer Science",
+        "event": "Web Development Workshop",
+        "status": "Registered"
+    },
+    {
+        "id": 2,
+        "name": "Ananya Patel",
+        "email": "ananya@example.com",
+        "department": "Information Technology",
+        "event": "AI Seminar",
+        "status": "Attended"
+    },
+    {
+        "id": 3,
+        "name": "Rohan Verma",
+        "email": "rohan@example.com",
+        "department": "Computer Science",
+        "event": "Cyber Security Conference",
+        "status": "Registered"
+    },
+    {
+        "id": 4,
+        "name": "Priya Singh",
+        "email": "priya@example.com",
+        "department": "Electronics",
+        "event": "Robotics Exhibition",
+        "status": "Cancelled"
+    },
+    {
+        "id": 5,
+        "name": "Kabir Mehta",
+        "email": "kabir@example.com",
+        "department": "Mechanical",
+        "event": "Innovation Meetup",
+        "status": "Registered"
+    },
+    {
+        "id": 6,
+        "name": "Meera Joshi",
+        "email": "meera@example.com",
+        "department": "Information Technology",
+        "event": "Cloud Computing Workshop",
+        "status": "Attended"
+    }
+]

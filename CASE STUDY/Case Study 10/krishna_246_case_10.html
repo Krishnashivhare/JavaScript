@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Event Registration System</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f1f4f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #164a7b;
+            margin-top: 0;
+        }
+
+        .description {
+            text-align: center;
+            color: #555;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #abb8c4;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        button {
+            background: #1769aa;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d4f82;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            color: white;
+            background: #1769aa;
+        }
+
+        .kpi-card:nth-child(2) {
+            background: #198754;
+        }
+
+        .kpi-card:nth-child(3) {
+            background: #f08c00;
+        }
+
+        .kpi-card:nth-child(4) {
+            background: #dc3545;
+        }
+
+        .kpi-card h2 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .kpi-card p {
+            margin: 8px 0 0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #164a7b;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f0f6fc;
+        }
+
+        .status {
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .registered {
+            color: #075e26;
+            background: #d1f3dc;
+        }
+
+        .attended {
+            color: #064b80;
+            background: #cfe8ff;
+        }
+
+        .cancelled {
+            color: #842029;
+            background: #f8d7da;
+        }
+
+        #message {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        @media (max-width: 800px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .kpi-container {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+        <h1>Campus Event Registration System</h1>
+
+        <p class="description">
+            Student event records loaded using JavaScript fetch() and jQuery $.getJSON().
+        </p>
+
+        <div class="button-group">
+            <button id="fetchButton">
+                Load Using fetch()
+            </button>
+
+            <button id="jqueryButton">
+                Load Using jQuery $.getJSON()
+            </button>
+        </div>
+
+        <div class="controls">
+            <input type="search" id="searchInput" placeholder="Search by name, email, event, or department">
+
+            <select id="departmentFilter">
+                <option value="all">All Departments</option>
+            </select>
+
+            <select id="statusFilter">
+                <option value="all">All Statuses</option>
+                <option value="Registered">Registered</option>
+                <option value="Attended">Attended</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <h2 id="totalCount">0</h2>
+                <p>Total Students</p>
+            </div>
+
+            <div class="kpi-card">
+                <h2 id="registeredCount">0</h2>
+                <p>Registered</p>
+            </div>
+
+            <div class="kpi-card">
+                <h2 id="attendedCount">0</h2>
+                <p>Attended</p>
+            </div>
+
+            <div class="kpi-card">
+                <h2 id="cancelledCount">0</h2>
+                <p>Cancelled</p>
+            </div>
+        </div>
+
+        <p id="message"></p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Event</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="studentTableBody">
+                    <tr>
+                        <td colspan="6">Click a button to load student records.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let studentRecords = [];
+
+        const tableBody = document.getElementById("studentTableBody");
+        const searchInput = document.getElementById("searchInput");
+        const departmentFilter = document.getElementById("departmentFilter");
+        const statusFilter = document.getElementById("statusFilter");
+        const message = document.getElementById("message");
+
+        function displayMessage(text, className) {
+            message.textContent = text;
+            message.className = className;
+        }
+
+        function populateDepartmentFilter(records) {
+            const departments = [
+                ...new Set(records.map(student => student.department))
+            ];
+
+            departmentFilter.innerHTML =
+                '<option value="all">All Departments</option>';
+
+            departments.forEach(department => {
+                const option = document.createElement("option");
+                option.value = department;
+                option.textContent = department;
+                departmentFilter.appendChild(option);
+            });
+        }
+
+        function renderTable(records) {
+            tableBody.innerHTML = "";
+
+            if (records.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6">No matching records found.</td>
+                    </tr>
+                `;
+
+                updateKPI([]);
+                return;
+            }
+
+            records.forEach(student => {
+                const row = document.createElement("tr");
+
+                const statusClass = student.status.toLowerCase();
+
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.department}</td>
+                    <td>${student.event}</td>
+                    <td>
+                        <span class="status ${statusClass}">
+                            ${student.status}
+                        </span>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+
+            updateKPI(records);
+        }
+
+        function updateKPI(records) {
+            document.getElementById("totalCount").textContent = records.length;
+
+            document.getElementById("registeredCount").textContent =
+                records.filter(student =>
+                    student.status === "Registered"
+                ).length;
+
+            document.getElementById("attendedCount").textContent =
+                records.filter(student =>
+                    student.status === "Attended"
+                ).length;
+
+            document.getElementById("cancelledCount").textContent =
+                records.filter(student =>
+                    student.status === "Cancelled"
+                ).length;
+        }
+
+        function filterRecords() {
+            const searchText = searchInput.value.toLowerCase();
+            const selectedDepartment = departmentFilter.value;
+            const selectedStatus = statusFilter.value;
+
+            const filteredRecords = studentRecords.filter(student => {
+                const searchableText = `
+                    ${student.name}
+                    ${student.email}
+                    ${student.department}
+                    ${student.event}
+                `.toLowerCase();
+
+                const matchesSearch =
+                    searchableText.includes(searchText);
+
+                const matchesDepartment =
+                    selectedDepartment === "all" ||
+                    student.department === selectedDepartment;
+
+                const matchesStatus =
+                    selectedStatus === "all" ||
+                    student.status === selectedStatus;
+
+                return matchesSearch &&
+                    matchesDepartment &&
+                    matchesStatus;
+            });
+
+            renderTable(filteredRecords);
+        }
+
+        function processData(data, methodName) {
+            studentRecords = data;
+
+            populateDepartmentFilter(studentRecords);
+            renderTable(studentRecords);
+
+            displayMessage(
+                `Data successfully loaded using ${methodName}.`,
+                "success"
+            );
+        }
+
+        // Native JavaScript fetch() API
+        document.getElementById("fetchButton").addEventListener("click", function () {
+            fetch("students.json")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Unable to load students.json");
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    processData(data, "fetch()");
+                })
+                .catch(error => {
+                    displayMessage(error.message, "error");
+                });
+        });
+
+        // jQuery $.getJSON()
+        document.getElementById("jqueryButton").addEventListener("click", function () {
+            $.getJSON("students.json")
+                .done(function (data) {
+                    processData(data, "jQuery $.getJSON()");
+                })
+                .fail(function () {
+                    displayMessage(
+                        "Unable to load students.json using jQuery.",
+                        "error"
+                    );
+                });
+        });
+
+        // Live search and filtering
+        searchInput.addEventListener("input", filterRecords);
+        departmentFilter.addEventListener("change", filterRecords);
+        statusFilter.addEventListener("change", filterRecords);
+    </script>
+
+</body>
+
+</html>

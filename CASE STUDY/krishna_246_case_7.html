@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 25px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        form {
+            width: 100%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 10px 3px 0;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        #userList {
+            padding-left: 20px;
+        }
+
+        #userList button {
+            padding: 4px 8px;
+            margin-left: 8px;
+            background-color: #dc3545;
+        }
+
+        #userList button:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Registration Form</h2>
+
+        <form id="registrationForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter your name">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email">
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password">
+
+            <p id="errorMessage" class="error"></p>
+
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </form>
+
+        <h3>Registered Users</h3>
+        <ul id="userList"></ul>
+    </div>
+
+    <script>
+        const form = document.getElementById("registrationForm");
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const errorMessage = document.getElementById("errorMessage");
+        const userList = document.getElementById("userList");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            errorMessage.textContent = "";
+
+            if (name === "") {
+                errorMessage.textContent = "Name is required.";
+                nameInput.focus();
+                return;
+            }
+
+            if (!email.includes("@") || !email.includes(".")) {
+                errorMessage.textContent = "Enter a valid email address.";
+                emailInput.focus();
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent =
+                    "Password must contain at least 6 characters.";
+                passwordInput.focus();
+                return;
+            }
+
+            const listItem = document.createElement("li");
+            listItem.textContent = `${name} - ${email}`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", function () {
+                listItem.remove();
+            });
+
+            listItem.appendChild(deleteButton);
+            userList.appendChild(listItem);
+
+            alert("Form submitted successfully!");
+
+            form.reset();
+        });
+
+        form.addEventListener("reset", function () {
+            errorMessage.textContent = "";
+        });
+    </script>
+
+</body>
+
+</html>

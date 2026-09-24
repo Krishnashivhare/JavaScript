@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JS Arrays & Methods Practice</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
+    .box { border: 1px solid #ddd; padding: 14px; border-radius: 10px; margin-bottom: 16px; }
+    button { margin: 6px 6px 0 0; padding: 8px 12px; cursor: pointer; }
+    pre { background: #0b1220; color: #e6edf3; padding: 12px; border-radius: 10px; overflow: auto; }
+    input { padding: 6px; width: 220px; }
+  </style>
+</head>
+<body>
+  <h1>JavaScript Arrays & Loop/Methods Practice</h1>
+
+  <div class="box">
+    <h2>A) Array operations: push, pop, shift, unshift, splice, slice</h2>
+
+    <p>Base array (changes when you run operations):</p>
+    <pre id="arrState">[10, 20, 30]</pre>
+
+    <div>
+      <button onclick="doPush()">push(40)</button>
+      <button onclick="doPop()">pop()</button>
+      <button onclick="doUnshift()">unshift(5)</button>
+      <button onclick="doShift()">shift()</button>
+      <button onclick="doSplice()">splice(1, 2, 99)</button>
+      <button onclick="doSlice()">slice(1, 4)</button>
+    </div>
+
+    <p>Operation result / logs:</p>
+    <pre id="arrLog"></pre>
+  </div>
+
+  <div class="box">
+    <h2>B) Array methods: forEach, map, filter, reduce (and case: min/max)</h2>
+
+    <p>Enter numbers separated by commas (for the case study):</p>
+    <input id="numbersInput" value="12,-3,45,7,19,0" />
+    <button onclick="caseMinMax()">Find min & max using reduce()</button>
+
+    <h3 style="margin-top:14px;">Method demos on: [1,2,3,4,5]</h3>
+    <div>
+      <button onclick="demoForEach()">forEach()</button>
+      <button onclick="demoMap()">map(x2)</button>
+      <button onclick="demoFilter()">filter(even)</button>
+      <button onclick="demoReduceSum()">reduce(sum)</button>
+    </div>
+
+    <p>Output:</p>
+    <pre id="methodLog"></pre>
+  </div>
+
+  <script>
+    // -------- A) Array operations --------
+    let arr = [10, 20, 30];
+
+    const arrStateEl = document.getElementById("arrState");
+    const arrLogEl = document.getElementById("arrLog");
+
+    function renderArray() {
+      arrStateEl.textContent = JSON.stringify(arr);
+    }
+
+    function log(msg) {
+      arrLogEl.textContent += msg + "\n";
+    }
+
+    function clearLog() {
+      arrLogEl.textContent = "";
+    }
+
+    function doPush() {
+      clearLog();
+      const result = arr.push(40);
+      renderArray();
+      log(`After push(40): ${JSON.stringify(arr)}`);
+      log(`push() return value (new length): ${result}`);
+    }
+
+    function doPop() {
+      clearLog();
+      const popped = arr.pop();
+      renderArray();
+      log(`popped value: ${popped}`);
+      log(`After pop(): ${JSON.stringify(arr)}`);
+    }
+
+    function doUnshift() {
+      clearLog();
+      const len = arr.unshift(5);
+      renderArray();
+      log(`After unshift(5): ${JSON.stringify(arr)}`);
+      log(`unshift() return value (new length): ${len}`);
+    }
+
+    function doShift() {
+      clearLog();
+      const removed = arr.shift();
+      renderArray();
+      log(`removed value: ${removed}`);
+      log(`After shift(): ${JSON.stringify(arr)}`);
+    }
+
+    function doSplice() {
+      clearLog();
+      // Remove 2 elements starting at index 1, then insert 99 at that position
+      arr.splice(1, 2, 99);
+      renderArray();
+      log(`After splice(1, 2, 99): ${JSON.stringify(arr)}`);
+      log(`Note: splice() modifies the original array.`);
+    }
+
+    function doSlice() {
+      clearLog();
+      const sliced = arr.slice(1, 4);
+      renderArray();
+      log(`slice(1, 4) result: ${JSON.stringify(sliced)}`);
+      log(`After slice(): original array unchanged => ${JSON.stringify(arr)}`);
+      log(`Note: slice() does NOT modify the original array.`);
+    }
+
+    // -------- B) Array methods --------
+    const methodLogEl = document.getElementById("methodLog");
+
+    function setMethodLog(msg) {
+      methodLogEl.textContent = msg;
+    }
+
+    function demoForEach() {
+      const nums = [1, 2, 3, 4, 5];
+      let out = "";
+      nums.forEach((n, i) => {
+        out += `index ${i}: ${n} -> ${n * 2}\n`;
+      });
+      setMethodLog(out.trim());
+    }
+
+    function demoMap() {
+      const nums = [1, 2, 3, 4, 5];
+      const doubled = nums.map(n => n * 2);
+      setMethodLog(`map(x2) input:  ${JSON.stringify(nums)}\nmap result:     ${JSON.stringify(doubled)}`);
+    }
+
+    function demoFilter() {
+      const nums = [1, 2, 3, 4, 5];
+      const evens = nums.filter(n => n % 2 === 0);
+      setMethodLog(`filter(even) input:  ${JSON.stringify(nums)}\nfilter result:       ${JSON.stringify(evens)}`);
+    }
+
+    function demoReduceSum() {
+      const nums = [1, 2, 3, 4, 5];
+      const sum = nums.reduce((acc, n) => acc + n, 0);
+      setMethodLog(`reduce(sum) input: ${JSON.stringify(nums)}\nSum = ${sum}`);
+    }
+
+    function parseNumbersInput() {
+      const raw = document.getElementById("numbersInput").value.trim();
+      if (!raw) return [];
+      return raw.split(",").map(s => Number(s.trim())).filter(n => !Number.isNaN(n));
+    }
+
+    function caseMinMax() {
+      const numbers = parseNumbersInput();
+
+      if (numbers.length === 0) {
+        setMethodLog("Please enter valid numbers (e.g., 1,2,3).");
+        return;
+      }
+
+      // Find max and min using reduce()
+      const max = numbers.reduce((currentMax, n) => (n > currentMax ? n : currentMax), numbers[0]);
+      const min = numbers.reduce((currentMin, n) => (n < currentMin ? n : currentMin), numbers[0]);
+
+      setMethodLog(
+        `Numbers: ${JSON.stringify(numbers)}\n` +
+        `Min (reduce): ${min}\n` +
+        `Max (reduce): ${max}`
+      );
+    }
+
+    // initial render
+    renderArray();
+    arrLogEl.textContent = "Click buttons to test push/pop/shift/unshift/splice/slice.";
+    methodLogEl.textContent = "Click buttons to test forEach/map/filter/reduce.";
+  </script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #163b65;
+            margin-bottom: 8px;
+        }
+
+        .intro {
+            text-align: center;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        fieldset {
+            border: 1px solid #c7d2df;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        legend {
+            padding: 0 10px;
+            font-weight: bold;
+            color: #163b65;
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #aebdca;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid #4285f4;
+            border-color: #4285f4;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .radio-group label,
+        .checkbox-group label {
+            font-weight: normal;
+        }
+
+        .radio-group input,
+        .checkbox-group input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .submit-btn {
+            background: #1769aa;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #0d4f82;
+        }
+
+        .reset-btn {
+            background: #777;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #555;
+        }
+
+        #message {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+        <header>
+            <h1>Career Application Portal</h1>
+            <p class="intro">
+                Apply for your desired position by completing the form below.
+            </p>
+        </header>
+
+        <form id="jobApplicationForm">
+
+            <!-- Personal Details -->
+            <fieldset>
+                <legend>1. Personal Details</legend>
+
+                <div class="form-grid">
+                    <div>
+                        <label for="firstName">
+                            First Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required
+                            minlength="2">
+                    </div>
+
+                    <div>
+                        <label for="lastName">
+                            Last Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required
+                            minlength="2">
+                    </div>
+
+                    <div>
+                        <label for="email">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                    </div>
+
+                    <div>
+                        <label for="phone">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter phone number" pattern="[0-9]{10}"
+                            title="Enter a 10-digit phone number" required>
+                    </div>
+
+                    <div>
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth">
+                    </div>
+
+                    <div>
+                        <label for="location">
+                            Current Location <span class="required">*</span>
+                        </label>
+                        <input type="text" id="location" name="location" placeholder="City, State" required>
+                    </div>
+
+                    <div class="full-width">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" placeholder="Enter your complete address"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Role and Experience -->
+            <fieldset>
+                <legend>2. Role &amp; Experience</legend>
+
+                <div class="form-grid">
+                    <div>
+                        <label for="position">
+                            Position Applied For <span class="required">*</span>
+                        </label>
+                        <select id="position" name="position" required>
+                            <option value="">-- Select Position --</option>
+                            <option value="frontend">Frontend Developer</option>
+                            <option value="backend">Backend Developer</option>
+                            <option value="fullstack">Full Stack Developer</option>
+                            <option value="designer">UI/UX Designer</option>
+                            <option value="tester">Software Tester</option>
+                            <option value="analyst">Data Analyst</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="experience">
+                            Years of Experience <span class="required">*</span>
+                        </label>
+                        <input type="number" id="experience" name="experience" min="0" max="50" placeholder="Example: 2"
+                            required>
+                    </div>
+
+                    <div>
+                        <label for="resume">
+                            Upload Resume <span class="required">*</span>
+                        </label>
+                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                    </div>
+
+                    <div>
+                        <label for="portfolio">Portfolio URL</label>
+                        <input type="url" id="portfolio" name="portfolio" placeholder="https://example.com">
+                    </div>
+
+                    <div class="full-width">
+                        <label for="summary">Professional Summary</label>
+                        <textarea id="summary" name="summary" maxlength="500"
+                            placeholder="Briefly describe your professional experience"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Education and Skills -->
+            <fieldset>
+                <legend>3. Education &amp; Skills</legend>
+
+                <div class="form-grid">
+                    <div>
+                        <label for="qualification">
+                            Highest Qualification <span class="required">*</span>
+                        </label>
+                        <select id="qualification" name="qualification" required>
+                            <option value="">-- Select Qualification --</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="bachelor">Bachelor's Degree</option>
+                            <option value="master">Master's Degree</option>
+                            <option value="phd">Ph.D.</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="specialization">Specialization</label>
+                        <input type="text" id="specialization" name="specialization"
+                            placeholder="Computer Science, Design, etc.">
+                    </div>
+
+                    <div class="full-width">
+                        <label>Technical Skills</label>
+
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="skills" value="html">
+                                HTML
+                            </label>
+
+                            <label>
+                                <input type="checkbox" name="skills" value="css">
+                                CSS
+                            </label>
+
+                            <label>
+                                <input type="checkbox" name="skills" value="javascript">
+                                JavaScript
+                            </label>
+
+                            <label>
+                                <input type="checkbox" name="skills" value="python">
+                                Python
+                            </label>
+
+                            <label>
+                                <input type="checkbox" name="skills" value="java">
+                                Java
+                            </label>
+
+                            <label>
+                                <input type="checkbox" name="skills" value="sql">
+                                SQL
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="full-width">
+                        <label for="certifications">Certifications</label>
+                        <textarea id="certifications" name="certifications"
+                            placeholder="List relevant certifications"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Work Preferences -->
+            <fieldset>
+                <legend>4. Work Preferences</legend>
+
+                <div class="form-grid">
+                    <div>
+                        <label>
+                            Preferred Work Mode <span class="required">*</span>
+                        </label>
+
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="workMode" value="onsite" required>
+                                On-site
+                            </label>
+
+                            <label>
+                                <input type="radio" name="workMode" value="remote">
+                                Remote
+                            </label>
+
+                            <label>
+                                <input type="radio" name="workMode" value="hybrid">
+                                Hybrid
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="joiningDate">
+                            Available Joining Date <span class="required">*</span>
+                        </label>
+                        <input type="date" id="joiningDate" name="joiningDate" required>
+                    </div>
+
+                    <div>
+                        <label for="salary">
+                            Expected Salary
+                        </label>
+                        <input type="number" id="salary" name="salary" min="0" placeholder="Enter expected salary">
+                    </div>
+
+                    <div>
+                        <label for="source">
+                            How did you hear about us?
+                        </label>
+                        <select id="source" name="source">
+                            <option value="">-- Select Option --</option>
+                            <option value="website">Company Website</option>
+                            <option value="jobportal">Job Portal</option>
+                            <option value="socialmedia">Social Media</option>
+                            <option value="referral">Employee Referral</option>
+                        </select>
+                    </div>
+
+                    <div class="full-width">
+                        <label>
+                            <input type="checkbox" id="agreement" name="agreement" required>
+                            I confirm that the information provided is accurate.
+                            <span class="required">*</span>
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="buttons">
+                <button type="submit" class="submit-btn">
+                    Submit Application
+                </button>
+
+                <button type="reset" class="reset-btn">
+                    Reset Form
+                </button>
+            </div>
+
+            <p id="message" aria-live="polite"></p>
+        </form>
+    </main>
+
+    <script>
+        const form = document.getElementById("jobApplicationForm");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            message.textContent = "";
+            message.className = "";
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                message.textContent =
+                    "Please complete all required fields correctly.";
+                message.className = "error";
+                return;
+            }
+
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const position = document.getElementById("position").value;
+
+            message.textContent =
+                `Thank you, ${firstName} ${lastName}. Your application for the ${position} position has been submitted successfully.`;
+
+            message.className = "success";
+
+            form.reset();
+        });
+
+        form.addEventListener("reset", function () {
+            message.textContent = "";
+            message.className = "";
+        });
+    </script>
+
+</body>
+
+</html>

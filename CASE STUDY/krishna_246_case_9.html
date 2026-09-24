@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Practical Lab Suite</title>
+
+    <style>
+        :root {
+            --bg: #f1f4f8;
+            --card: #ffffff;
+            --text: #202124;
+            --primary: #1769aa;
+            --secondary: #e8f1fb;
+            --border: #ccd6e0;
+            --shadow: rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg: #161b22;
+            --card: #21262d;
+            --text: #f0f6fc;
+            --primary: #58a6ff;
+            --secondary: #30363d;
+            --border: #444c56;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 115px);
+        }
+
+        aside {
+            width: 260px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        main {
+            flex: 1;
+            padding: 25px;
+            max-width: 1100px;
+            margin: auto;
+            width: 100%;
+        }
+
+        .theme-button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background: var(--primary);
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .theme-button:hover,
+        .tab-button:hover {
+            opacity: 0.85;
+        }
+
+        .menu-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 20px;
+        }
+
+        .menu-list li {
+            margin: 4px 0;
+        }
+
+        .tab-button {
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .content {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .content h2 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--secondary);
+        }
+
+        .info-card h3 {
+            margin-top: 0;
+        }
+
+        .task-list {
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        .task-list input {
+            margin-right: 8px;
+            accent-color: var(--primary);
+        }
+
+        .progress-box {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 8px;
+            background: var(--secondary);
+        }
+
+        progress {
+            width: 100%;
+            height: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 750px) {
+            .layout {
+                display: block;
+            }
+
+            aside {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Task Management &amp; Practical Lab Suite</h1>
+        <p>Practicals 1–8 Integrated Learning Portal</p>
+    </header>
+
+    <div class="layout">
+
+        <aside>
+            <button id="themeButton" class="theme-button">
+                Toggle Dark Mode
+            </button>
+
+            <div class="menu-title" id="menuTitle">
+                Practical Exercises
+                <span id="arrow">▼</span>
+            </div>
+
+            <ul class="menu-list" id="menuList">
+                <li>
+                    <button class="tab-button active" data-tab="practical1">
+                        Practical 1
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical2">
+                        Practical 2
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical3">
+                        Practical 3
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical4">
+                        Practical 4
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical5">
+                        Practical 5
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical6">
+                        Practical 6
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical7">
+                        Practical 7
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-button" data-tab="practical8">
+                        Practical 8
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <main>
+
+            <section id="practical1" class="content active">
+                <h2>Practical 1: Basic HTML Page</h2>
+                <p>Design a basic webpage using headings, paragraphs, lists, links, and images.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>HTML structure, headings, paragraphs, lists, hyperlinks, and images.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Understand the basic structure of an HTML document.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical2" class="content">
+                <h2>Practical 2: HTML Tables and Forms</h2>
+                <p>Create tables and forms using semantic HTML elements.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>Tables, labels, input fields, select menus, and buttons.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Build structured forms for collecting user information.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical3" class="content">
+                <h2>Practical 3: CSS Styling</h2>
+                <p>Apply colors, fonts, spacing, borders, and backgrounds using CSS.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>Selectors, properties, box model, colors, and typography.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Improve the appearance and readability of web pages.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical4" class="content">
+                <h2>Practical 4: Responsive Web Design</h2>
+                <p>Design layouts that work on desktop, tablet, and mobile screens.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>Media queries, flexible layouts, responsive units, and mobile design.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Create websites that adapt to different screen sizes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical5" class="content">
+                <h2>Practical 5: JavaScript Basics</h2>
+                <p>Use variables, functions, operators, conditions, and loops in JavaScript.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>Variables, data types, functions, conditional statements, and loops.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Develop basic programming logic using JavaScript.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical6" class="content">
+                <h2>Practical 6: Event Handling</h2>
+                <p>Handle user actions such as clicks, mouse events, and keyboard events.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>click, submit, change, mouseover, keydown, and addEventListener().</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Make web pages interactive and responsive to user actions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical7" class="content">
+                <h2>Practical 7: Form Validation and DOM Manipulation</h2>
+                <p>Validate forms and dynamically create, update, and remove elements.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Topics</h3>
+                        <p>Form validation, DOM selection, createElement(), appendChild(), and remove().</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Process form data and modify webpage content dynamically.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practical8" class="content">
+                <h2>Practical 8: Job Application Portal</h2>
+                <p>Develop a multi-section job application form using HTML5, CSS Grid, and JavaScript.</p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Sections</h3>
+                        <p>Personal Details, Role and Experience, Education and Skills, and Work Preferences.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Objective</h3>
+                        <p>Create an accessible, responsive, and validated career application portal.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="progress-box">
+                <h3>Task Progress</h3>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 1 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 2 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 3 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 4 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 5 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 6 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 7 completed
+                </label>
+                <br>
+
+                <label>
+                    <input type="checkbox" class="task-checkbox">
+                    Practical 8 completed
+                </label>
+
+                <p>
+                    Completed:
+                    <span id="progressText">0%</span>
+                </p>
+
+                <progress id="progressBar" value="0" max="100"></progress>
+            </div>
+
+        </main>
+    </div>
+
+    <footer>
+        Student Practical Lab Suite &copy; 2026
+    </footer>
+
+    <script>
+        const themeButton = document.getElementById("themeButton");
+        const menuTitle = document.getElementById("menuTitle");
+        const menuList = document.getElementById("menuList");
+        const arrow = document.getElementById("arrow");
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const contents = document.querySelectorAll(".content");
+        const checkboxes = document.querySelectorAll(".task-checkbox");
+        const progressBar = document.getElementById("progressBar");
+        const progressText = document.getElementById("progressText");
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem("theme");
+
+        if (savedTheme === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            themeButton.textContent = "Switch to Light Mode";
+        }
+
+        // Theme switching
+        themeButton.addEventListener("click", function () {
+            const currentTheme =
+                document.documentElement.getAttribute("data-theme");
+
+            if (currentTheme === "dark") {
+                document.documentElement.removeAttribute("data-theme");
+                localStorage.setItem("theme", "light");
+                themeButton.textContent = "Toggle Dark Mode";
+            } else {
+                document.documentElement.setAttribute("data-theme", "dark");
+                localStorage.setItem("theme", "dark");
+                themeButton.textContent = "Switch to Light Mode";
+            }
+        });
+
+        // Collapsible menu
+        menuTitle.addEventListener("click", function () {
+            if (menuList.style.display === "none") {
+                menuList.style.display = "block";
+                arrow.textContent = "▼";
+            } else {
+                menuList.style.display = "none";
+                arrow.textContent = "▶";
+            }
+        });
+
+        // Tab navigation
+        tabButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const selectedTab = button.getAttribute("data-tab");
+
+                tabButtons.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                contents.forEach(function (content) {
+                    content.classList.remove("active");
+                });
+
+                button.classList.add("active");
+                document.getElementById(selectedTab).classList.add("active");
+            });
+        });
+
+        // Save and update task progress
+        function updateProgress() {
+            let completedTasks = 0;
+
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    completedTasks++;
+                }
+            });
+
+            const percentage =
+                Math.round((completedTasks / checkboxes.length) * 100);
+
+            progressBar.value = percentage;
+            progressText.textContent = percentage + "%";
+
+            const taskStatus = [];
+
+            checkboxes.forEach(function (checkbox) {
+                taskStatus.push(checkbox.checked);
+            });
+
+            localStorage.setItem(
+                "taskProgress",
+                JSON.stringify(taskStatus)
+            );
+        }
+
+        // Load saved task progress
+        const savedProgress = localStorage.getItem("taskProgress");
+
+        if (savedProgress) {
+            const taskStatus = JSON.parse(savedProgress);
+
+            checkboxes.forEach(function (checkbox, index) {
+                checkbox.checked = taskStatus[index] || false;
+            });
+        }
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", updateProgress);
+        });
+
+        updateProgress();
+    </script>
+
+</body>
+
+</html>
